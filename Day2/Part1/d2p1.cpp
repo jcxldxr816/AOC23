@@ -4,6 +4,31 @@
 
 using namespace std;
 
+void determineValues(int pos, string text, int & val)
+{
+    if (pos == -1)
+    {
+        val = 0;
+        return;
+    }
+    
+    //checking tens place for digit
+    pos -=3;
+    if ((text[pos] > 48) && (text[pos] <= 57)) //if there is a digit in tens place
+    {
+        char temp[] = {text[pos], text[pos+1]};
+        string pair = temp;
+        val = stoi(pair);
+        return;
+    }
+    else //if there isn't a digit in the tens place
+    {
+        pos++; //move to ones place
+        val = text[pos] -48;
+        return;
+    };
+}
+
 int main() //testing git version hist
 {
     ifstream fin;
@@ -13,9 +38,10 @@ int main() //testing git version hist
     string line;
     while (getline(fin, line))
     {
-        gameCt++;
-        cout << "Game #" << gameCt << endl;
         bool lessThan = true;
+        gameCt++;
+        
+        cout << "Game #" << gameCt << endl;
         string section;
         int gamePos = line.find(": ");
         line.erase(0, gamePos+1);
@@ -24,77 +50,32 @@ int main() //testing git version hist
 
         while (getline(sin, section, ';'))
         {
+            cout << endl;
             //cout << "Section: " << section << endl;
             
-            int redPos = section.find("red") -3;
-            int greenPos = section.find("green") -3;
-            int bluePos = section.find("blue") -3;
+            int redPos = section.find("red");
+            int greenPos = section.find("green");
+            int bluePos = section.find("blue");
             int redVal, greenVal, blueVal = 0;
 
-            if ((section[redPos] > 48) && (section[redPos] <=57))
-            {
-                redVal = 0;
-                char red[] = {section[redPos], section[redPos+1]};
-                string r = red;
-                redVal = stoi(r);
+            determineValues(redPos, section, redVal);
+            determineValues(greenPos, section, greenVal);
+            determineValues(bluePos, section, blueVal);
 
-                cout << "DOUBLE DIGIT" << endl;
-            }
-            else 
-            {
-                redVal = 0;
-                redPos++;
-                if (section[redPos] != 0)
-                {
-                    redVal = section[redPos] -48;
-                }
-            }
+            //cout << "RGB Values: " << "R: " << redVal << " " << "G: " << greenVal << " " << "B: " << blueVal <<endl;
 
-            if ((section[greenPos] > 48) && (section[greenPos] <=57))
+            if ((redVal > 12) || (greenVal > 13) || (blueVal > 14))
             {
-                greenVal = 0;
-                char green[2] = {section[greenPos], section[greenPos+1]};
-                cout << green << endl;
-                string g = green;
-                cout << g << endl;
-                greenVal = stoi(g);
-
-                cout << "DOUBLE DIGIT" << endl;
+                lessThan = false;
+                cout << "game is impossible" << endl;
             }
-            else 
-            {
-                greenVal = 0;
-                greenPos++;
-                if (section[greenPos] != 0)
-                {
-                    greenVal = section[greenPos] -48;
-                }
-            }
-
-            if ((section[bluePos] > 48) && (section[bluePos] <=57))
-            {
-                blueVal = 0;
-                char blue[] = {section[bluePos], section[bluePos+1]};
-
-                string b = blue;
-
-                blueVal = stoi(b);
-                
-                cout << "DOUBLE DIGIT" << endl;
-            }
-            else 
-            {
-                blueVal = 0;
-                bluePos++;
-                if (section[bluePos] != 0)
-                {
-                    blueVal = section[bluePos] -48;
-                }
-            }
-            cout << "RGB Values: " << redVal << " " << greenVal << " " << blueVal <<endl;
-            
+        }
+        if (lessThan == true)
+        {
+            sum += gameCt;
         }
         cout << endl;
+        cout << sum << endl;
     }
 
     fin.close();
