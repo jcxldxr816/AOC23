@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -14,30 +15,19 @@ void splitString(string source, char delim, string & a, string & b)
 
 void ctoi(string source, vector<int> & values)
 {
-    vector<char> cString;
-    for (char c : source)
+    stringstream iss;
+    iss << source;
+    string text;
+    while (iss >> text)
     {
-        cString.push_back(c);
-    }
-    for (int i=0; i<cString.size(); i++)
-    {
-        //2 digit number " XX"
-        if ( (cString.at(i) == ' ') && ((cString.at(i) >48) && (cString.at(i) <=57)) && ((cString.at(i+1) >=48) && (cString.at(i+1) <=57)) )
-        {
-            char temp[] = {cString.at(i), cString.at(i+1)};
-            string pair = temp;
-            values.push_back(stoi(pair));
-        }
-        //1 digit number " X "
-        if ((cString.at(i) == ' ') && ((cString.at(i+1) >48) && (cString.at(i+1) <=57)) && (cString.at(i+2) == ' '))
-        {
-            values.push_back(cString.at(i+1)-48);
-        }
+        values.push_back(stoi(text));
     }
 }
 
 int main()
 {
+    int sum = 0;
+    
     ifstream fin;
     fin.open("d4p1src.txt");
 
@@ -51,7 +41,7 @@ int main()
 
         string winString, cardString;
         splitString(line, '|', winString, cardString);
-        cout << "Winning Numbers: " << winString << " Card Numbers: " << cardString << endl;
+        //cout << "Winning Numbers: " << winString << " Card Numbers: " << cardString << endl;
 
         vector<int> winningNums;
         ctoi(winString, winningNums);
@@ -59,15 +49,30 @@ int main()
         vector<int> cardNums;
         ctoi(cardString, cardNums);
 
-        for (int x : winningNums)
-        {
-            cout << "Winning Nums: " << x << endl;
-        }
+        int points = 0;
+        bool havePt = false;
         for (int x : cardNums)
         {
-            cout << "Card Nums: " << x << endl;
+            for (int y : winningNums)
+            {
+                if ( (x == y) && (havePt == false) )
+                {
+                    points++;
+                    havePt = true;
+                    //cout << "MATCH FOUND - - - Winning Number: " << y << " Card Number: " << x  << " " << endl;
+                    //cout << "Score: " << points << endl;
+                }
+                else if ( (x == y) && (havePt == true) )
+                {
+                    points *= 2;
+                    //cout << "MATCH FOUND - - - Winning Number: " << y << " Card Number: " << x << " DOUBLED SCORE" << endl;
+                    //cout << "Score: " << points << endl;
+                }
+            }
         }
+        sum += points;
     }
+    cout << sum;
 
     fin.close();
     return 0;
