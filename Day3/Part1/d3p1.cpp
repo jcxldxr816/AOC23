@@ -8,14 +8,14 @@ int main()
     ifstream fin;
     fin.open("d3p1src.txt");
 
-    const unsigned short ROWS = 10;
-    unsigned short COLUMNS;
+    unsigned short ROWS;
+    const unsigned short COLUMNS = 10;
     string line;
     while (fin>>line)
     {
-        COLUMNS++;
+        ROWS++;
     }
-    cout << COLUMNS << endl;
+    cout << ROWS << endl;
 
     char schematic[ROWS][COLUMNS];
     while (fin>>line)
